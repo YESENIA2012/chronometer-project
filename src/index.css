@@ -11,3 +11,73 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.page-body{
+  background-color: #1e555c;
+  height: 760px;
+  width: 100%;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+}
+
+.counters-container{
+  width: 80%;
+}
+
+.modify-timer{
+  display: flex;
+  justify-content: space-around;
+  width: 700px;
+}
+
+.controller{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  justify-content: center;
+  text-align: initial;
+  margin-left: 20px;
+}
+
+.icon{
+  font-weight: 400;
+}
+
+.chronometer-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  width: 80%;
+}
+
+.chronometer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: initial;
+  width: 35%;
+  height: 150px;
+  border: 7px solid #13353a;
+  border-radius: 10%;
+}
+
+.title{
+  margin-top: auto;
+}
+
+.time{
+  margin-top: auto;
+}
+
+.icons-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 20px;
+  width: 35%;
+}
