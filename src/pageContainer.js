@@ -1,19 +1,19 @@
 import React from "react";
 import TimerContainer from "./timerContainer.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faL } from '@fortawesome/free-solid-svg-icons'
-import { faArrowDown } from '@fortawesome/free-solid-svg-icons'
+import { faArrowUp, faArrowDown, faL } from '@fortawesome/free-solid-svg-icons'
 
-let minutes = null
-let seconds = null
+/* let minutesSession = null
+let minutesBreak = null */
+
 
 class PageContainer extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      breakLength: 5, 
-      sessionLength: 25,
-      time: '25:00',
+      breakLength: 1, 
+      sessionLength: 1,
+      time: '01:00',
       moodTimerSession: true,
     };
     this.incrementCounterBreak = this.incrementCounterBreak.bind(this);
@@ -22,11 +22,11 @@ class PageContainer extends React.Component{
     this.incrementCounterSession = this.incrementCounterSession.bind(this);
     this.decrementCounterSession = this.decrementCounterSession.bind(this);
     this.changeStateFromZeroToOneInSession = this.changeStateFromZeroToOneInSession.bind(this)
-    this.changeTime = this.changeTime.bind(this)
+    this.changeTimeSession = this.changeTimeSession.bind(this)
     this.play = this.play.bind(this)
     this.resetCountersButton = this.resetCountersButton.bind(this)
-    this.displayTimer = this.displayTimer.bind(this)
-    this.timer = null
+/*     this.displayTimerSession = this.displayTimerSession.bind(this) */
+    this.timerSession = null
   }
 
   incrementCounterBreak(){
@@ -54,6 +54,7 @@ class PageContainer extends React.Component{
   }
 
   incrementCounterSession(){
+    
     this.setState({
       sessionLength: this.state.sessionLength + 1,
       time: this.state.sessionLength + 1 + ':00'
@@ -65,7 +66,7 @@ class PageContainer extends React.Component{
 
     this.setState({
       sessionLength: sessionLength - 1,
-      time: this.state.sessionLength - 1 + ':00'
+      time: sessionLength - 1 + ':00'
     })
 
     if(sessionLength <= 1){
@@ -75,66 +76,115 @@ class PageContainer extends React.Component{
 
   changeStateFromZeroToOneInSession(){
     this.setState({
-      sessionLength: 1
+      sessionLength: 1,
+      time: '01:00'
     })
   }
 
-  changeTime(){
+ /*  componentDidMount(){
+    this.timerSession = setInterval(() => 
+      this.changeTimeSession(),
+      1000);
+  } */
 
-    let moodTimer = null
-    minutes =  this.state.sessionLength
-    seconds = 0
+  changeTimeSession(){
+    const {time, moodTimerSession, sessionLength, breakLength} = this.state
+    
+    /* let moodTimer = null 
+    let minutesBreak = breakLength
+     if(seconds === 0 || seconds === '00'){
 
-    this.timer = setInterval(()=>{
-      
-      if(seconds === 0 || seconds === '00'){
-        if(minutes !== 0){
+       if(minutesSession > 0){
           moodTimer = true
-          minutes = minutes - 1
-          minutes = minutes < 10 ? `0${minutes}` : minutes
-          seconds = 59
-        } else {
+          minutesSession = minutesSession - 1
+          minutesSession = minutesSession < 10 ? `0${minutesSession}` : minutesSession
+          seconds = 5
+        } else if(minutesSession === '00' && minutesBreak !== '00') {
           moodTimer = false
+          minutesBreak = minutesBreak - 1
+          minutesBreak = minutesBreak < 10 ? `0${minutesBreak}` : minutesBreak
+          seconds = 5
+        } else if(minutesBreak === '00'){
+          clearInterval(this.timerSession)
+          return this.play()
         }
       } else {
-        seconds = seconds - 1
-      }
-
+        seconds = seconds - 1   
+      } 
       this.setState({
         moodTimerSession: moodTimer
       })
+      this.displayTimerSession(minutes, seconds)
+      */
+      let splitedTime = time.split(":")
+      let currentMinutes =  Number(splitedTime[0])
+      let currentSeconds = Number(splitedTime[1])
 
-      this.displayTimer()
-      
-    }, 1000)
+      let minutes = currentMinutes
+      let seconds = currentSeconds
+
+
+      this.setState((prevState, state) =>{
+
+        if(seconds === 0){
+          if(minutes > 0){
+            minutes = minutes - 1
+            seconds = 59
+          }
+        } else {
+          seconds = seconds - 1
+        }
+
+        let dataToUpdate = {
+          time: `${minutes} : ${seconds}`, 
+        } 
+
+
+
+        if(currentMinutes === 0 && currentSeconds === 0){
+          if(moodTimerSession){
+            dataToUpdate.moodTimerSession = false
+            dataToUpdate.time = `${breakLength} : 00`
+          } else {
+            dataToUpdate.moodTimerSession = true
+            dataToUpdate.time = `${sessionLength} : 00`
+          }
+        }
+        console.log('data to update', dataToUpdate)
+        return dataToUpdate
+      })
+       
   } 
 
-  displayTimer(){
-    seconds = seconds < 10 ? `0${seconds}` : seconds
-    console.log('estos son los minutos', minutes)
+  /* displayTimerSession(minutes, seconds){
 
-    this.setState({
-      time: `${minutes} : ${seconds}`
-    })
-  }
+    /* let minutes = moodTimerSession ? minutesSession : minutesBreak
+    minutesSession = minutesSession > 10
+    seconds = seconds < 10 ? `0${seconds}` : seconds
+
+   
+  } */
 
   play(){
-    this.changeTime()
+
+    this.timerSession = setInterval(() => 
+    this.changeTimeSession(),
+    1000);
+
   }
 
   resetCountersButton(){
     this.setState({
-      breakLength: 5, 
-      sessionLength: 25,
-      time: '25:00'
+      breakLength: 1, 
+      sessionLength: 1,
+      time: '01:00',
+      moodTimerSession: true
     })
-    clearInterval(this.timer)
+    clearInterval(this.timerSession)
   }
-
  
   render(){
     const {breakLength, sessionLength, time, moodTimerSession} = this.state;
-
 
     return(
       <div className="page-body">

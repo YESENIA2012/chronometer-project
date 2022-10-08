@@ -1,8 +1,6 @@
 import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faPlay} from '@fortawesome/free-solid-svg-icons'
-import {faPause} from '@fortawesome/free-solid-svg-icons'
-import {faArrowsRotate} from '@fortawesome/free-solid-svg-icons'
+import {faPlay, faPause, faArrowsRotate} from '@fortawesome/free-solid-svg-icons'
 
 
 
