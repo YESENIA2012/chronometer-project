@@ -53,8 +53,7 @@ class PageContainer extends React.Component{
     })
   }
 
-  incrementCounterSession(){
-    
+  incrementCounterSession(){   
     this.setState({
       sessionLength: this.state.sessionLength + 1,
       time: this.state.sessionLength + 1 + ':00'
@@ -81,41 +80,12 @@ class PageContainer extends React.Component{
     })
   }
 
- /*  componentDidMount(){
-    this.timerSession = setInterval(() => 
-      this.changeTimeSession(),
-      1000);
-  } */
-
   changeTimeSession(){
-    const {time, moodTimerSession, sessionLength, breakLength} = this.state
+      
+    this.setState((prevState) =>{
+      const {time, moodTimerSession, sessionLength, breakLength} = prevState
     
-    /* let moodTimer = null 
-    let minutesBreak = breakLength
-     if(seconds === 0 || seconds === '00'){
 
-       if(minutesSession > 0){
-          moodTimer = true
-          minutesSession = minutesSession - 1
-          minutesSession = minutesSession < 10 ? `0${minutesSession}` : minutesSession
-          seconds = 5
-        } else if(minutesSession === '00' && minutesBreak !== '00') {
-          moodTimer = false
-          minutesBreak = minutesBreak - 1
-          minutesBreak = minutesBreak < 10 ? `0${minutesBreak}` : minutesBreak
-          seconds = 5
-        } else if(minutesBreak === '00'){
-          clearInterval(this.timerSession)
-          return this.play()
-        }
-      } else {
-        seconds = seconds - 1   
-      } 
-      this.setState({
-        moodTimerSession: moodTimer
-      })
-      this.displayTimerSession(minutes, seconds)
-      */
       let splitedTime = time.split(":")
       let currentMinutes =  Number(splitedTime[0])
       let currentSeconds = Number(splitedTime[1])
@@ -123,54 +93,42 @@ class PageContainer extends React.Component{
       let minutes = currentMinutes
       let seconds = currentSeconds
 
+      if(seconds === 0){
+        if(minutes > 0){
+          minutes = minutes - 1
+          seconds = 59
+        }
+      } else {
+        seconds = seconds - 1
+      }
 
-      this.setState((prevState, state) =>{
+      minutes = minutes < 10 ? `0${minutes}` : minutes
+      seconds = seconds < 10 ? `0${seconds}` : seconds
 
-        if(seconds === 0){
-          if(minutes > 0){
-            minutes = minutes - 1
-            seconds = 59
-          }
+      let dataToUpdate = {
+        time: `${minutes} : ${seconds}`
+      }
+
+      if(currentMinutes === 0 && currentSeconds === 0){
+        
+        if(moodTimerSession){
+          dataToUpdate.moodTimerSession = false
+          dataToUpdate.time = `${breakLength} : 00`
         } else {
-          seconds = seconds - 1
+          dataToUpdate.moodTimerSession = true
+          dataToUpdate.time = `${sessionLength} : 00`
         }
+      }
 
-        let dataToUpdate = {
-          time: `${minutes} : ${seconds}`, 
-        } 
-
-
-
-        if(currentMinutes === 0 && currentSeconds === 0){
-          if(moodTimerSession){
-            dataToUpdate.moodTimerSession = false
-            dataToUpdate.time = `${breakLength} : 00`
-          } else {
-            dataToUpdate.moodTimerSession = true
-            dataToUpdate.time = `${sessionLength} : 00`
-          }
-        }
-        console.log('data to update', dataToUpdate)
-        return dataToUpdate
-      })
-       
+      return dataToUpdate
+    }) 
   } 
 
-  /* displayTimerSession(minutes, seconds){
-
-    /* let minutes = moodTimerSession ? minutesSession : minutesBreak
-    minutesSession = minutesSession > 10
-    seconds = seconds < 10 ? `0${seconds}` : seconds
-
-   
-  } */
 
   play(){
-
     this.timerSession = setInterval(() => 
     this.changeTimeSession(),
     1000);
-
   }
 
   resetCountersButton(){
