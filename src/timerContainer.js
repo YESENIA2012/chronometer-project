@@ -10,7 +10,7 @@ class TimerContainer extends React.Component{
   }
 
   render(){
-    const { time, play, resetCountersButton, moodTimerSession } = this.props
+    const { time, play, resetCountersButton, moodTimerSession, pause } = this.props
 
     let title = moodTimerSession ? 'Session' : 'Break'
 
@@ -22,7 +22,7 @@ class TimerContainer extends React.Component{
         </div>
         <div className="icons-container">
           <FontAwesomeIcon icon={faPlay} onClick={play}/>
-          <FontAwesomeIcon icon={faPause}/>
+          <FontAwesomeIcon icon={faPause} onClick={pause}/>
           <FontAwesomeIcon icon={faArrowsRotate} onClick={resetCountersButton}/>
         </div>   
       </div>

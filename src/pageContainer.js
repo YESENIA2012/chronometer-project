@@ -1,11 +1,7 @@
 import React from "react";
 import TimerContainer from "./timerContainer.js";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown, faL } from '@fortawesome/free-solid-svg-icons'
-
-/* let minutesSession = null
-let minutesBreak = null */
-
+import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons'
 
 class PageContainer extends React.Component{
   constructor(props){
@@ -25,13 +21,31 @@ class PageContainer extends React.Component{
     this.changeTimeSession = this.changeTimeSession.bind(this)
     this.play = this.play.bind(this)
     this.resetCountersButton = this.resetCountersButton.bind(this)
-/*     this.displayTimerSession = this.displayTimerSession.bind(this) */
+    this.pause = this.pause.bind(this)
     this.timerSession = null
   }
 
-  incrementCounterBreak(){
+  incrementCounterBreak(e){
+
+    const {sessionLength, breakLength} = this.state
+
+    let counterBreak = breakLength
+    let counterSession = sessionLength
+
+    let attribute = e.target.attributes.class.value
+    attribute = attribute.split(' ')
+    let elementClicked = attribute[3]
+
+    if(elementClicked === 'break-arrow-up-icon'){
+      counterBreak ++
+    } else if(elementClicked === 'session-arrow-up-icon'){
+      counterSession ++
+    }
+
     this.setState({
-      breakLength: this.state.breakLength + 1
+      breakLength: counterBreak,
+      sessionLength: counterSession,
+      time: sessionLength + 1 + ':00'
     })   
   }
 
@@ -56,7 +70,7 @@ class PageContainer extends React.Component{
   incrementCounterSession(){   
     this.setState({
       sessionLength: this.state.sessionLength + 1,
-      time: this.state.sessionLength + 1 + ':00'
+      
     }) 
   }
 
@@ -85,13 +99,13 @@ class PageContainer extends React.Component{
     this.setState((prevState) =>{
       const {time, moodTimerSession, sessionLength, breakLength} = prevState
     
-
       let splitedTime = time.split(":")
       let currentMinutes =  Number(splitedTime[0])
       let currentSeconds = Number(splitedTime[1])
 
       let minutes = currentMinutes
       let seconds = currentSeconds
+      minutes = minutes < 10 ? `0${minutes}` : minutes
 
       if(seconds === 0){
         if(minutes > 0){
@@ -100,10 +114,8 @@ class PageContainer extends React.Component{
         }
       } else {
         seconds = seconds - 1
+        seconds = seconds < 10 ? `0${seconds}` : seconds
       }
-
-      minutes = minutes < 10 ? `0${minutes}` : minutes
-      seconds = seconds < 10 ? `0${seconds}` : seconds
 
       let dataToUpdate = {
         time: `${minutes} : ${seconds}`
@@ -124,11 +136,14 @@ class PageContainer extends React.Component{
     }) 
   } 
 
-
   play(){
     this.timerSession = setInterval(() => 
     this.changeTimeSession(),
     1000);
+  }
+
+  pause(){
+    clearInterval(this.timerSession)
   }
 
   resetCountersButton(){
@@ -154,17 +169,25 @@ class PageContainer extends React.Component{
             <div className="timer-one">
               <h3>Break Length</h3>
               <div className="controller">
-                <FontAwesomeIcon className="icon" icon={faArrowDown} onClick={this.decrementCounterBreak}/>
+                <div className="break-arrow-down">
+                  <FontAwesomeIcon key='icon-1' className="icon break-arrow-down-icon" icon={faArrowDown} onClick={this.decrementCounterBreak}/>
+                </div>
                 <p className="first-counter">{breakLength}</p>
-                <FontAwesomeIcon className="icon" icon={faArrowUp} onClick={this.incrementCounterBreak}/>
+                <div className="break-arrow-up">
+                  <FontAwesomeIcon className="icon break-arrow-up-icon" icon={faArrowUp} onClick={this.incrementCounterBreak}/>
+                </div>
               </div>
             </div>
             <div className="timer-two">
               <h3>Session Length</h3>
               <div className="controller">
-                <FontAwesomeIcon className="icon" icon={faArrowDown} onClick={this.decrementCounterSession}/>
+                <div className="session-arrow-down">
+                  <FontAwesomeIcon className="icon session-arrow-down-icon" icon={faArrowDown} onClick={this.decrementCounterSession}/>
+                </div>
                 <p className="second-counter">{sessionLength}</p>
-                <FontAwesomeIcon className="icon" icon={faArrowUp} onClick={this.incrementCounterSession}/>
+                <div className="session-arrow-up">
+                  <FontAwesomeIcon className="icon session-arrow-up-icon" icon={faArrowUp} onClick={this.incrementCounterBreak}/>
+                </div>
               </div>
             </div>
           </section>
@@ -176,6 +199,7 @@ class PageContainer extends React.Component{
         play={this.play}
         resetCountersButton={this.resetCountersButton}
         moodTimerSession={moodTimerSession}
+        pause={this.pause}
         />
       </div>
     )
