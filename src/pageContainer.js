@@ -12,8 +12,7 @@ class PageContainer extends React.Component{
       time: '01:00',
       moodTimerSession: true,
     };
-    this.increaseBreakAndSessionLength = this.increaseBreakAndSessionLength.bind(this);
-    this.decreaseBreakAndSessionLength = this.decreaseBreakAndSessionLength.bind(this);
+    this.increaseOrDecreaseBreakAndSessionLength = this.increaseOrDecreaseBreakAndSessionLength.bind(this);
     this.changeStateFromZeroToOneInBreak = this.changeStateFromZeroToOneInBreak.bind(this)
     this.changeStateFromZeroToOneInSession = this.changeStateFromZeroToOneInSession.bind(this)
     this.changeTimeSession = this.changeTimeSession.bind(this)
@@ -23,70 +22,33 @@ class PageContainer extends React.Component{
     this.timerSession = null
   }
 
-  increaseBreakAndSessionLength(e){
+  increaseOrDecreaseBreakAndSessionLength(arrowType){
 
     const {sessionLength, breakLength} = this.state
     let counterBreak = breakLength
     let counterSession = sessionLength
-
-    if(e.target.attributes.class.value === undefined){
-      return
-    } else {
-
-      let attribute = e.target.attributes.class.value
-      attribute = attribute.split(' ')
-
-      let elementClicked = attribute[3]
   
-      if(elementClicked === 'break-arrow-up-icon'){
-        counterBreak ++
-      }   
-      if(elementClicked === 'session-arrow-up-icon'){
-        counterSession ++
-      }
+    if(arrowType === 'break-arrow-up'){
+      counterBreak ++
+    } else if(arrowType === 'break-arrow-down'){
+      counterBreak --
+    } else if(arrowType === 'session-arrow-up'){
+      counterSession ++
+    } else if(arrowType === 'session-arrow-down'){
+      counterSession --
     }
 
     this.setState({
       breakLength: counterBreak,
       sessionLength: counterSession,
       time: counterSession + ':00'
-    })   
-  }
-
-  decreaseBreakAndSessionLength(e){
-    const {breakLength, sessionLength} = this.state
-
-    let counterBreak2 = breakLength
-    let counterSession2 = sessionLength
-
-    if(e.target.attributes.class.value === undefined){
-      return
-    } else {
-      let attribute2 = e.target.attributes.class.value
-      attribute2 = attribute2.split(' ')
-
-      let elementClicked = attribute2[3]
-  
-      if(elementClicked === 'break-arrow-down-icon'){
-        counterBreak2 --
-      }   
-      
-      if(elementClicked === 'session-arrow-down-icon'){
-        counterSession2 --
-      }
-    }
-
-    this.setState({
-      breakLength: counterBreak2,
-      sessionLength: counterSession2,
-      time: counterSession2 + ':00'
     })
 
-    if(breakLength <= 1){
+    if(counterBreak <= 1){
       this.changeStateFromZeroToOneInBreak()
     }
 
-    if(sessionLength <= 1){
+    if(counterSession <= 1){
       this.changeStateFromZeroToOneInSession()
     }
   }
@@ -179,24 +141,24 @@ class PageContainer extends React.Component{
             <div className="timer-one">
               <h3>Break Length</h3>
               <div className="controller">
-                <div className="break-arrow-down">
-                  <FontAwesomeIcon key='icon-1' className="icon break-arrow-down-icon" icon={faArrowDown} onClick={this.decreaseBreakAndSessionLength}/>
+                <div className="break-arrow-down" onClick={()=> this.increaseOrDecreaseBreakAndSessionLength('break-arrow-down')}>
+                  <FontAwesomeIcon key='icon-1' className="icon break-arrow-down-icon" icon={faArrowDown}/>
                 </div>
                 <p className="first-counter">{breakLength}</p>
-                <div className="break-arrow-up">
-                  <FontAwesomeIcon className="icon break-arrow-up-icon" icon={faArrowUp} onClick={this.increaseBreakAndSessionLength}/>
+                <div className="break-arrow-up" onClick={()=> this.increaseOrDecreaseBreakAndSessionLength('break-arrow-up')}>
+                  <FontAwesomeIcon className="icon break-arrow-up-icon" icon={faArrowUp}/>
                 </div>
               </div>
             </div>
             <div className="timer-two">
               <h3>Session Length</h3>
               <div className="controller">
-                <div className="session-arrow-down">
-                  <FontAwesomeIcon className="icon session-arrow-down-icon" icon={faArrowDown} onClick={this.decreaseBreakAndSessionLength}/>
+                <div className="session-arrow-down" onClick={()=> this.increaseOrDecreaseBreakAndSessionLength('session-arrow-down')}>
+                  <FontAwesomeIcon className="icon session-arrow-down-icon" icon={faArrowDown}/>
                 </div>
                 <p className="second-counter">{sessionLength}</p>
-                <div className="session-arrow-up">
-                  <FontAwesomeIcon className="icon session-arrow-up-icon" icon={faArrowUp} onClick={this.increaseBreakAndSessionLength}/>
+                <div className="session-arrow-up" onClick={()=> this.increaseOrDecreaseBreakAndSessionLength('session-arrow-up')}>
+                  <FontAwesomeIcon className="icon session-arrow-up-icon" icon={faArrowUp}/>
                 </div>
               </div>
             </div>
