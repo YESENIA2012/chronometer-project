@@ -12,11 +12,9 @@ class PageContainer extends React.Component{
       time: '01:00',
       moodTimerSession: true,
     };
-    this.incrementCounterBreak = this.incrementCounterBreak.bind(this);
-    this.decrementCounterBreak = this.decrementCounterBreak.bind(this);
+    this.increaseBreakAndSessionLength = this.increaseBreakAndSessionLength.bind(this);
+    this.decreaseBreakAndSessionLength = this.decreaseBreakAndSessionLength.bind(this);
     this.changeStateFromZeroToOneInBreak = this.changeStateFromZeroToOneInBreak.bind(this)
-    this.incrementCounterSession = this.incrementCounterSession.bind(this);
-    this.decrementCounterSession = this.decrementCounterSession.bind(this);
     this.changeStateFromZeroToOneInSession = this.changeStateFromZeroToOneInSession.bind(this)
     this.changeTimeSession = this.changeTimeSession.bind(this)
     this.play = this.play.bind(this)
@@ -25,39 +23,71 @@ class PageContainer extends React.Component{
     this.timerSession = null
   }
 
-  incrementCounterBreak(e){
+  increaseBreakAndSessionLength(e){
 
     const {sessionLength, breakLength} = this.state
-
     let counterBreak = breakLength
     let counterSession = sessionLength
 
-    let attribute = e.target.attributes.class.value
-    attribute = attribute.split(' ')
-    let elementClicked = attribute[3]
+    if(e.target.attributes.class.value === undefined){
+      return
+    } else {
 
-    if(elementClicked === 'break-arrow-up-icon'){
-      counterBreak ++
-    } else if(elementClicked === 'session-arrow-up-icon'){
-      counterSession ++
+      let attribute = e.target.attributes.class.value
+      attribute = attribute.split(' ')
+
+      let elementClicked = attribute[3]
+  
+      if(elementClicked === 'break-arrow-up-icon'){
+        counterBreak ++
+      }   
+      if(elementClicked === 'session-arrow-up-icon'){
+        counterSession ++
+      }
     }
 
     this.setState({
       breakLength: counterBreak,
       sessionLength: counterSession,
-      time: sessionLength + 1 + ':00'
+      time: counterSession + ':00'
     })   
   }
 
-  decrementCounterBreak(){
-    const {breakLength} = this.state
+  decreaseBreakAndSessionLength(e){
+    const {breakLength, sessionLength} = this.state
+
+    let counterBreak2 = breakLength
+    let counterSession2 = sessionLength
+
+    if(e.target.attributes.class.value === undefined){
+      return
+    } else {
+      let attribute2 = e.target.attributes.class.value
+      attribute2 = attribute2.split(' ')
+
+      let elementClicked = attribute2[3]
+  
+      if(elementClicked === 'break-arrow-down-icon'){
+        counterBreak2 --
+      }   
+      
+      if(elementClicked === 'session-arrow-down-icon'){
+        counterSession2 --
+      }
+    }
 
     this.setState({
-      breakLength: breakLength - 1
+      breakLength: counterBreak2,
+      sessionLength: counterSession2,
+      time: counterSession2 + ':00'
     })
 
     if(breakLength <= 1){
       this.changeStateFromZeroToOneInBreak()
+    }
+
+    if(sessionLength <= 1){
+      this.changeStateFromZeroToOneInSession()
     }
   }
 
@@ -65,26 +95,6 @@ class PageContainer extends React.Component{
     this.setState({
       breakLength: 1
     })
-  }
-
-  incrementCounterSession(){   
-    this.setState({
-      sessionLength: this.state.sessionLength + 1,
-      
-    }) 
-  }
-
-  decrementCounterSession(){
-    const {sessionLength} = this.state
-
-    this.setState({
-      sessionLength: sessionLength - 1,
-      time: sessionLength - 1 + ':00'
-    })
-
-    if(sessionLength <= 1){
-      this.changeStateFromZeroToOneInSession()
-    }
   }
 
   changeStateFromZeroToOneInSession(){
@@ -170,11 +180,11 @@ class PageContainer extends React.Component{
               <h3>Break Length</h3>
               <div className="controller">
                 <div className="break-arrow-down">
-                  <FontAwesomeIcon key='icon-1' className="icon break-arrow-down-icon" icon={faArrowDown} onClick={this.decrementCounterBreak}/>
+                  <FontAwesomeIcon key='icon-1' className="icon break-arrow-down-icon" icon={faArrowDown} onClick={this.decreaseBreakAndSessionLength}/>
                 </div>
                 <p className="first-counter">{breakLength}</p>
                 <div className="break-arrow-up">
-                  <FontAwesomeIcon className="icon break-arrow-up-icon" icon={faArrowUp} onClick={this.incrementCounterBreak}/>
+                  <FontAwesomeIcon className="icon break-arrow-up-icon" icon={faArrowUp} onClick={this.increaseBreakAndSessionLength}/>
                 </div>
               </div>
             </div>
@@ -182,11 +192,11 @@ class PageContainer extends React.Component{
               <h3>Session Length</h3>
               <div className="controller">
                 <div className="session-arrow-down">
-                  <FontAwesomeIcon className="icon session-arrow-down-icon" icon={faArrowDown} onClick={this.decrementCounterSession}/>
+                  <FontAwesomeIcon className="icon session-arrow-down-icon" icon={faArrowDown} onClick={this.decreaseBreakAndSessionLength}/>
                 </div>
                 <p className="second-counter">{sessionLength}</p>
                 <div className="session-arrow-up">
-                  <FontAwesomeIcon className="icon session-arrow-up-icon" icon={faArrowUp} onClick={this.incrementCounterBreak}/>
+                  <FontAwesomeIcon className="icon session-arrow-up-icon" icon={faArrowUp} onClick={this.increaseBreakAndSessionLength}/>
                 </div>
               </div>
             </div>
