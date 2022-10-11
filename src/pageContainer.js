@@ -30,12 +30,16 @@ class PageContainer extends React.Component{
   
     if(arrowType === 'break-arrow-up'){
       counterBreak ++
+      counterBreak = counterBreak < 10 ? `0${counterBreak}` : counterBreak
     } else if(arrowType === 'break-arrow-down'){
       counterBreak --
+      counterBreak = counterBreak < 10 ? `0${counterBreak}` : counterBreak
     } else if(arrowType === 'session-arrow-up'){
       counterSession ++
+      counterSession = counterSession < 10 ? `0${counterSession}` : counterSession
     } else if(arrowType === 'session-arrow-down'){
       counterSession --
+      counterSession = counterSession < 10 ? `0${counterSession}` : counterSession
     }
 
     this.setState({
@@ -70,7 +74,10 @@ class PageContainer extends React.Component{
       
     this.setState((prevState) =>{
       const {time, moodTimerSession, sessionLength, breakLength} = prevState
-    
+      
+      let audio = "https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
+      const sound = new Audio(audio)
+
       let splitedTime = time.split(":")
       let currentMinutes =  Number(splitedTime[0])
       let currentSeconds = Number(splitedTime[1])
@@ -94,7 +101,7 @@ class PageContainer extends React.Component{
       }
 
       if(currentMinutes === 0 && currentSeconds === 0){
-        
+        sound.play()
         if(moodTimerSession){
           dataToUpdate.moodTimerSession = false
           dataToUpdate.time = `${breakLength} : 00`
@@ -129,7 +136,7 @@ class PageContainer extends React.Component{
   }
  
   render(){
-    const {breakLength, sessionLength, time, moodTimerSession} = this.state;
+    const {breakLength, sessionLength, time, moodTimerSession, styleBorder, styleColorFont} = this.state;
 
     return(
       <div className="page-body">
@@ -172,6 +179,8 @@ class PageContainer extends React.Component{
         resetCountersButton={this.resetCountersButton}
         moodTimerSession={moodTimerSession}
         pause={this.pause}
+        styleBorder={styleBorder}
+        styleColorFont={styleColorFont}
         />
       </div>
     )
