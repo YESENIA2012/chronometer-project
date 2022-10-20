@@ -12,15 +12,14 @@ class PageContainer extends React.Component {
       time: "01:00",
       moodTimerSession: true,
     };
-    this.increaseOrDecreaseBreakAndSessionLength =
-      this.increaseOrDecreaseBreakAndSessionLength.bind(this);
+    this.changeBreakAndSessionTime = this.changeBreakAndSessionTime.bind(this);
     this.play = this.play.bind(this);
     this.resetCountersButton = this.resetCountersButton.bind(this);
     this.pause = this.pause.bind(this);
     this.timerSession = null;
   }
 
-  increaseOrDecreaseBreakAndSessionLength(arrowType) {
+  changeBreakAndSessionTime(arrowType) {
     const { sessionLength, breakLength } = this.state;
     let counterBreak = breakLength;
     let counterSession = sessionLength;
@@ -160,9 +159,7 @@ class PageContainer extends React.Component {
                 <div
                   className="break-arrow-down"
                   onClick={() =>
-                    this.increaseOrDecreaseBreakAndSessionLength(
-                      "break-arrow-down"
-                    )
+                    this.changeBreakAndSessionTime("break-arrow-down")
                   }
                 >
                   <FontAwesomeIcon
@@ -175,9 +172,7 @@ class PageContainer extends React.Component {
                 <div
                   className="break-arrow-up"
                   onClick={() =>
-                    this.increaseOrDecreaseBreakAndSessionLength(
-                      "break-arrow-up"
-                    )
+                    this.changeBreakAndSessionTime("break-arrow-up")
                   }
                 >
                   <FontAwesomeIcon
@@ -193,9 +188,7 @@ class PageContainer extends React.Component {
                 <div
                   className="session-arrow-down"
                   onClick={() =>
-                    this.increaseOrDecreaseBreakAndSessionLength(
-                      "session-arrow-down"
-                    )
+                    this.changeBreakAndSessionTime("session-arrow-down")
                   }
                 >
                   <FontAwesomeIcon
@@ -207,9 +200,7 @@ class PageContainer extends React.Component {
                 <div
                   className="session-arrow-up"
                   onClick={() =>
-                    this.increaseOrDecreaseBreakAndSessionLength(
-                      "session-arrow-up"
-                    )
+                    this.changeBreakAndSessionTime("session-arrow-up")
                   }
                 >
                   <FontAwesomeIcon
