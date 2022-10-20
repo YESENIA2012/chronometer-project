@@ -1,142 +1,152 @@
 import React from "react";
 import TimerContainer from "./timerContainer.js";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faL } from '@fortawesome/free-solid-svg-icons'
-import { faArrowDown } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowUp, faArrowDown } from "@fortawesome/free-solid-svg-icons";
 
-let minutes = null
-let seconds = null
-
-class PageContainer extends React.Component{
-  constructor(props){
+class PageContainer extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
-      breakLength: 5, 
-      sessionLength: 25,
-      time: '25:00',
+      breakLength: 1,
+      sessionLength: 1,
+      time: "01:00",
       moodTimerSession: true,
     };
-    this.incrementCounterBreak = this.incrementCounterBreak.bind(this);
-    this.decrementCounterBreak = this.decrementCounterBreak.bind(this);
-    this.changeStateFromZeroToOneInBreak = this.changeStateFromZeroToOneInBreak.bind(this)
-    this.incrementCounterSession = this.incrementCounterSession.bind(this);
-    this.decrementCounterSession = this.decrementCounterSession.bind(this);
-    this.changeStateFromZeroToOneInSession = this.changeStateFromZeroToOneInSession.bind(this)
-    this.changeTime = this.changeTime.bind(this)
-    this.play = this.play.bind(this)
-    this.resetCountersButton = this.resetCountersButton.bind(this)
-    this.displayTimer = this.displayTimer.bind(this)
-    this.timer = null
+    this.changeBreakAndSessionTime = this.changeBreakAndSessionTime.bind(this);
+    this.play = this.play.bind(this);
+    this.resetCountersButton = this.resetCountersButton.bind(this);
+    this.pause = this.pause.bind(this);
+    this.timerSession = null;
   }
 
-  incrementCounterBreak(){
+  changeBreakAndSessionTime(arrowType) {
+    const { sessionLength, breakLength } = this.state;
+    let counterBreak = breakLength;
+    let counterSession = sessionLength;
+
+    switch (arrowType) {
+      case "break-arrow-up":
+        counterBreak++;
+        counterBreak = counterBreak < 10 ? `0${counterBreak}` : counterBreak;
+        break;
+      case "break-arrow-down":
+        counterBreak--;
+        counterBreak = counterBreak < 10 ? `0${counterBreak}` : counterBreak;
+        break;
+      case "session-arrow-up":
+        counterSession++;
+        counterSession =
+          counterSession < 10 ? `0${counterSession}` : counterSession;
+        break;
+      case "session-arrow-down":
+        counterSession--;
+        counterSession =
+          counterSession < 10 ? `0${counterSession}` : counterSession;
+        break;
+    }
+
     this.setState({
-      breakLength: this.state.breakLength + 1
-    })   
-  }
+      breakLength: counterBreak,
+      sessionLength: counterSession,
+      time: counterSession + ":00",
+    });
 
-  decrementCounterBreak(){
-    const {breakLength} = this.state
+    if (counterBreak <= 1) {
+      this.changeStateFromZeroToOneInBreak();
+    }
 
-    this.setState({
-      breakLength: breakLength - 1
-    })
-
-    if(breakLength <= 1){
-      this.changeStateFromZeroToOneInBreak()
+    if (counterSession <= 1) {
+      this.changeStateFromZeroToOneInSession();
     }
   }
 
-  changeStateFromZeroToOneInBreak(){
+  changeStateFromZeroToOneInBreak() {
     this.setState({
-      breakLength: 1
-    })
+      breakLength: 1,
+    });
   }
 
-  incrementCounterSession(){
+  changeStateFromZeroToOneInSession() {
     this.setState({
-      sessionLength: this.state.sessionLength + 1,
-      time: this.state.sessionLength + 1 + ':00'
-    }) 
+      sessionLength: 1,
+      time: "01:00",
+    });
   }
 
-  decrementCounterSession(){
-    const {sessionLength} = this.state
+  changeTimeSession() {
+    this.setState((prevState) => {
+      const { time, moodTimerSession, sessionLength, breakLength } = prevState;
 
-    this.setState({
-      sessionLength: sessionLength - 1,
-      time: this.state.sessionLength - 1 + ':00'
-    })
+      let audio =
+        "https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav";
+      const sound = new Audio(audio);
 
-    if(sessionLength <= 1){
-      this.changeStateFromZeroToOneInSession()
-    }
-  }
+      let splitedTime = time.split(":");
+      let currentMinutes = Number(splitedTime[0]);
+      let currentSeconds = Number(splitedTime[1]);
 
-  changeStateFromZeroToOneInSession(){
-    this.setState({
-      sessionLength: 1
-    })
-  }
+      let minutes = currentMinutes;
+      let seconds = currentSeconds;
+      minutes = minutes < 10 ? `0${minutes}` : minutes;
 
-  changeTime(){
-
-    let moodTimer = null
-    minutes =  this.state.sessionLength
-    seconds = 0
-
-    this.timer = setInterval(()=>{
-      
-      if(seconds === 0 || seconds === '00'){
-        if(minutes !== 0){
-          moodTimer = true
-          minutes = minutes - 1
-          minutes = minutes < 10 ? `0${minutes}` : minutes
-          seconds = 59
-        } else {
-          moodTimer = false
+      if (seconds === 0) {
+        if (minutes > 0) {
+          minutes = minutes - 1;
+          seconds = 59;
         }
       } else {
-        seconds = seconds - 1
+        seconds = seconds - 1;
+        seconds = seconds < 10 ? `0${seconds}` : seconds;
       }
 
-      this.setState({
-        moodTimerSession: moodTimer
-      })
+      let dataToUpdate = {
+        time: `${minutes} : ${seconds}`,
+      };
 
-      this.displayTimer()
-      
-    }, 1000)
-  } 
+      if (!currentMinutes && !currentSeconds) {
+        sound.play();
+        if (moodTimerSession) {
+          dataToUpdate.moodTimerSession = false;
+          dataToUpdate.time = `${breakLength} : 00`;
+        } else {
+          dataToUpdate.moodTimerSession = true;
+          dataToUpdate.time = `${sessionLength} : 00`;
+        }
+      }
 
-  displayTimer(){
-    seconds = seconds < 10 ? `0${seconds}` : seconds
-    console.log('estos son los minutos', minutes)
+      return dataToUpdate;
+    });
+  }
 
+  play() {
+    this.timerSession = setInterval(() => this.changeTimeSession(), 1000);
+  }
+
+  pause() {
+    clearInterval(this.timerSession);
+  }
+
+  resetCountersButton() {
     this.setState({
-      time: `${minutes} : ${seconds}`
-    })
+      breakLength: 1,
+      sessionLength: 1,
+      time: "01:00",
+      moodTimerSession: true,
+    });
+    clearInterval(this.timerSession);
   }
 
-  play(){
-    this.changeTime()
-  }
+  render() {
+    const {
+      breakLength,
+      sessionLength,
+      time,
+      moodTimerSession,
+      styleBorder,
+      styleColorFont,
+    } = this.state;
 
-  resetCountersButton(){
-    this.setState({
-      breakLength: 5, 
-      sessionLength: 25,
-      time: '25:00'
-    })
-    clearInterval(this.timer)
-  }
-
- 
-  render(){
-    const {breakLength, sessionLength, time, moodTimerSession} = this.state;
-
-
-    return(
+    return (
       <div className="page-body">
         <div className="counters-container">
           <header>
@@ -146,32 +156,76 @@ class PageContainer extends React.Component{
             <div className="timer-one">
               <h3>Break Length</h3>
               <div className="controller">
-                <FontAwesomeIcon className="icon" icon={faArrowDown} onClick={this.decrementCounterBreak}/>
+                <div
+                  className="break-arrow-down"
+                  onClick={() =>
+                    this.changeBreakAndSessionTime("break-arrow-down")
+                  }
+                >
+                  <FontAwesomeIcon
+                    key="icon-1"
+                    className="icon break-arrow-down-icon"
+                    icon={faArrowDown}
+                  />
+                </div>
                 <p className="first-counter">{breakLength}</p>
-                <FontAwesomeIcon className="icon" icon={faArrowUp} onClick={this.incrementCounterBreak}/>
+                <div
+                  className="break-arrow-up"
+                  onClick={() =>
+                    this.changeBreakAndSessionTime("break-arrow-up")
+                  }
+                >
+                  <FontAwesomeIcon
+                    className="icon break-arrow-up-icon"
+                    icon={faArrowUp}
+                  />
+                </div>
               </div>
             </div>
             <div className="timer-two">
               <h3>Session Length</h3>
               <div className="controller">
-                <FontAwesomeIcon className="icon" icon={faArrowDown} onClick={this.decrementCounterSession}/>
+                <div
+                  className="session-arrow-down"
+                  onClick={() =>
+                    this.changeBreakAndSessionTime("session-arrow-down")
+                  }
+                >
+                  <FontAwesomeIcon
+                    className="icon session-arrow-down-icon"
+                    icon={faArrowDown}
+                  />
+                </div>
                 <p className="second-counter">{sessionLength}</p>
-                <FontAwesomeIcon className="icon" icon={faArrowUp} onClick={this.incrementCounterSession}/>
+                <div
+                  className="session-arrow-up"
+                  onClick={() =>
+                    this.changeBreakAndSessionTime("session-arrow-up")
+                  }
+                >
+                  <FontAwesomeIcon
+                    className="icon session-arrow-up-icon"
+                    icon={faArrowUp}
+                  />
+                </div>
               </div>
             </div>
           </section>
         </div>
-        <TimerContainer 
-        time={time}
-        breakLength={breakLength}
-        sessionLength={sessionLength}
-        play={this.play}
-        resetCountersButton={this.resetCountersButton}
-        moodTimerSession={moodTimerSession}
+        <TimerContainer
+          time={time}
+          breakLength={breakLength}
+          sessionLength={sessionLength}
+          play={this.play}
+          resetCountersButton={this.resetCountersButton}
+          moodTimerSession={moodTimerSession}
+          pause={this.pause}
+          styleBorder={styleBorder}
+          styleColorFont={styleColorFont}
         />
       </div>
-    )
+    );
   }
 }
 
-export default PageContainer
+export default PageContainer;
